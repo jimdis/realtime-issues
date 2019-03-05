@@ -13,7 +13,10 @@ const router = express.Router()
 const controller = require('../controllers/homeController')
 
 // GET /
-router.get('/', controller.connectAPI, controller.index)
+router.get('/', controller.index)
+
+// GET /:id
+router.get('/:id', controller.id)
 
 // Exports.
 module.exports = router
