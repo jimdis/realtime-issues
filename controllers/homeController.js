@@ -8,12 +8,14 @@
 'use strict'
 
 const path = require('path')
+const api = require('../lib/api')
 
 const homeController = {}
 
 // Middleware to call connection to GitHub API
-homeController.connectAPI = (req, res, next) => {
-  console.log('hej')
+homeController.connectAPI = async (req, res, next) => {
+  let result = await api.getIssues()
+  console.log(result)
   next()
 }
 
