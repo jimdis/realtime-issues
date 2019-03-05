@@ -1,6 +1,6 @@
 /* global $, fetch */
 
-const apiURL = '/jimdis'
+const apiURL = '/auth/issues'
 
 async function getIssues () {
   let data = await fetch(apiURL)

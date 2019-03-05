@@ -66,6 +66,8 @@ app.use(session(sessionOptions))
 
 // routes
 app.use('/', require('./routes/homeRouter'))
+app.use('/auth', require('./routes/authRouter'))
+app.use('/push', require('./routes/pushRouter'))
 
 // catch 404
 app.use((req, res, next) => {

@@ -1,5 +1,5 @@
 /**
- * Home Routes.
+ * Push Routes.
  *
  * @author Jim Disenstam
  * @version 1.0
@@ -10,10 +10,10 @@
 const express = require('express')
 const router = express.Router()
 
-const controller = require('../controllers/homeController')
+const controller = require('../controllers/pushController')
 
-// GET /
-router.get('/', controller.index)
+// POST /
+router.post('/', controller.indexPost)
 
 // Exports.
 module.exports = router
