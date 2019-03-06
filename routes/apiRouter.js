@@ -1,5 +1,5 @@
 /**
- * Auth Routes.
+ * API Routes.
  *
  * @author Jim Disenstam
  * @version 1.0
@@ -10,16 +10,13 @@
 const express = require('express')
 const router = express.Router()
 
-const controller = require('../controllers/authController')
+const controller = require('../controllers/apiController')
 
 // GET /
 router.get('/', controller.index)
 
-// GET /callback
-router.get('/callback', controller.callback)
-
-// GET /status
-router.get('/status', controller.status)
+// GET /paths
+router.get('/*', controller.paths)
 
 // Exports.
 module.exports = router

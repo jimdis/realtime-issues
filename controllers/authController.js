@@ -68,19 +68,6 @@ authController.callback = async (req, res, next) => {
 }
 
 /**
- * issues GET
- */
-authController.issues = async (req, res, next) => {
-  let token = req.session.access_token
-  if (token) {
-    let result = await api.getIssues(token)
-    res.json({
-      result: result
-    })
-  } else res.status(403).json('Authentication failed')
-}
-
-/**
  * /status GET
  */
 authController.status = async (req, res, next) => {

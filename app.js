@@ -66,6 +66,7 @@ app.use(session(sessionOptions))
 
 // routes
 app.use('/', require('./routes/homeRouter'))
+app.use('/api', require('./routes/apiRouter'))
 app.use('/auth', require('./routes/authRouter'))
 app.use('/push', require('./routes/pushRouter'))
 
