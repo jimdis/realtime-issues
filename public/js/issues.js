@@ -1,9 +1,9 @@
 /* global $, fetch */
 
-const apiURL = '/auth/issues'
+const apiURL = '/auth'
 
 async function getIssues () {
-  let data = await fetch(apiURL)
+  let data = await fetch(`${apiURL}/issues`)
   data = await data.json()
   console.log(data)
   data.result.forEach(issue => {
@@ -13,4 +13,15 @@ async function getIssues () {
   })
 }
 
-getIssues()
+// getIssues()
+
+async function checkAuthorization () {
+  console.log('running checkAuth')
+  let data = await fetch(`${apiURL}/status`)
+  data = await data.json()
+  if (data.authorized) {
+    getIssues()
+  } else console.log('Not authorized')
+}
+
+checkAuthorization()

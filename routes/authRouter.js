@@ -21,5 +21,8 @@ router.get('/callback', controller.callback)
 // GET /issues
 router.get('/issues', controller.issues)
 
+// GET /status
+router.get('/status', controller.status)
+
 // Exports.
 module.exports = router
