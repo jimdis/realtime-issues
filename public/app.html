@@ -39,15 +39,7 @@
 
     </div>
   </div>
-  <!--   List of Issues   -->
-  <div class="container">
-    <div class="section">
-      <ul class="collection" id="issuesCollection">
-      </ul>
-    </div>
-  </div>
-
-
+  <div id="issuesDiv"></div>
   <div class="container">
     <div class="section">
 
@@ -121,6 +113,33 @@
     </div>
   </footer>
 
+  <!--   Templates   -->
+  <template id="issuesTemplate">
+    <div class="container">
+      <div class="section">
+        <ul class="collection with-header">
+          <li class="collection-header">
+            <h4>Issues</h4>
+          </li>
+          <li class="collection-item avatar" id="progressBar">
+            <i class="material-icons circle">account_circle</i>
+            <div class="progress">
+              <div class="indeterminate"></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </template>
+
+  <template id="issuesListTemplate">
+    <li class="collection-item avatar">
+      <i class="material-icons circle">account_circle</i>
+      <span class="title"></span>
+      <p></p>
+      <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+    </li>
+  </template>
 
   <!--  Scripts-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
