@@ -39,6 +39,7 @@
 
     </div>
   </div>
+
   <div id="issuesDiv"></div>
   <div class="container">
     <div class="section">
@@ -114,30 +115,69 @@
   </footer>
 
   <!--   Templates   -->
-  <template id="issuesTemplate">
+  <template id="reposTemplate">
     <div class="container">
-      <div class="section">
-        <ul class="collection with-header">
-          <li class="collection-header grey lighten-4">
-            <div class="row valign-wrapper">
-
-              <div class="col s10">
-                <h4></h4>
-              </div>
-              <div class="col s2">
-                <img src="" alt="" class="circle responsive-img right-align">
-              </div>
-            </div>
-
-          </li>
-          <li class="collection-item avatar" id="progressBar">
-            <i class="material-icons circle">account_circle</i>
-            <div class="progress">
-              <div class="indeterminate"></div>
-            </div>
-          </li>
-        </ul>
+      <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-blue-only">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+        </div>
       </div>
+      <div class="row" id="issues-wrapper">
+        <div class="row valign-wrapper">
+          <div class="col s2">
+            <img src="" alt="" class="circle responsive-img left-align gh-avatar">
+          </div>
+          <div class="col s10">
+            <h5 id="gh-name-repos">Fetching user data...</h5>
+          </div>
+        </div>
+        <div class="col s6">
+          <div class="collection">
+            <a href="#" id="progressBar" class="collection-item hide">
+              <div class="section">
+                <h5>Fetching list of repos...</h5>
+                <div class="progress">
+                  <div class="indeterminate"></div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+  </template>
+
+  <template id="repoListTemplate">
+    <a href="#!" class="collection-item">
+      <div class="section">
+        <i class="material-icons right">list</i>
+        <h5 class="repo-title"></h5>
+        <p class="repo-description"></p>
+      </div>
+    </a>
+  </template>
+
+  <template id="issuesTemplate">
+    <div class="col s6" id="issuesCollection">
+      <ul class="collection with-header">
+        <li class="collection-header grey lighten-4">
+          <h5 class="title"></h5>
+        </li>
+        <li class="collection-item avatar" id="progressBar">
+          <p>Fetching issues...</p>
+          <i class="material-icons circle">account_circle</i>
+          <div class="progress">
+            <div class="indeterminate"></div>
+          </div>
+        </li>
+      </ul>
     </div>
   </template>
 

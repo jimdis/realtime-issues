@@ -2,42 +2,74 @@
 
 const apiURL = '/auth'
 
-async function getIssues () {
-  let data = await fetch('/api/repos/1dv023/jd222qe-examination-3/issues')
-  data = await data.json()
-  console.log(data)
-  $('#progressBar').remove()
-  data.result.forEach(issue => {
-    let li = document.querySelector('#issuesListTemplate').content.cloneNode(true)
-    li.querySelector('.title').textContent = issue.title
-    $('#issuesDiv ul').append(li)
-  })
-}
-
 async function renderLoggedIn () {
-  $('#issuesDiv').append($('#issuesTemplate').html())
-  let data = await fetch('/api/user')
-  data = await data.json()
-  console.log(data.result)
-  $('#issuesDiv img').attr('src', data.result.avatar_url)
-  $('#issuesDiv h4').text(`${data.result.name}'s Issues`)
+  $('#issuesDiv').append($('#reposTemplate').html())
+  let res = await fetch('/api/user')
+  res = await res.json()
+  console.log(res)
+  getAllRepos()
+  $('#issuesDiv div.preloader-wrapper').remove()
+  $('#issuesDiv img.gh-avatar').attr('src', res.avatar_url)
+  $('#gh-name-repos').text(`${res.name}'s Repos with open issues`)
 }
 
 async function testAPI () {
-  // let data = await fetch('/api/user')
-  // data = await data.json()
-  // console.log('Test API: ', data)
+  // let res = await fetch(`/api/search/issues?q=author:${username}`)
+  let res = await fetch(`/api/repos/jimdis/jd222qe_1dv600/issues`)
+  res = await res.json()
+  console.log('Test API: ', res)
+}
+
+async function getAllRepos () {
+  $('#progressBar').toggleClass('hide')
+  let res = await fetch(`/api/user/repos`)
+  res = await res.json()
+  $('#progressBar').remove()
+  res.forEach(repo => {
+    if (repo.open_issues_count > 0) {
+      console.log('getAllRepos: ', repo)
+      let temp = document.querySelector('#repoListTemplate').content.cloneNode(true)
+      temp.querySelector('.repo-title').textContent = `Repo: ${repo.full_name}`
+      temp.querySelector('.repo-description').textContent = repo.description
+      temp.querySelector('a').setAttribute('data-issues', repo.full_name)
+      $('#issuesDiv div.collection').append(temp)
+    }
+  })
+  $('#issuesDiv div.collection a').click((e) => {
+    $('#issuesCollection').remove()
+    console.log(e.currentTarget.getAttribute('data-issues'))
+    getAllIssues(e.currentTarget.getAttribute('data-issues'))
+  })
+}
+
+async function getAllIssues (uri) {
+  $('#issues-wrapper').append($('#issuesTemplate').html())
+  $('#issuesCollection .title').text(`Issues in ${uri}`)
+  let res = await fetch(`/api/repos/${uri}/issues`)
+  res = await res.json()
+  console.log('getAllIssues: ', res)
+  renderIssues(res)
+}
+
+function renderIssues (arr) {
+  $('#progressBar').remove()
+  arr.forEach(issue => {
+    let li = document.querySelector('#issuesListTemplate').content.cloneNode(true)
+    li.querySelector('.title').textContent = issue.title
+    $('#issuesCollection ul').append(li)
+  })
 }
 
 async function checkAuthorization () {
   console.log('running checkAuth')
-  let data = await fetch(`${apiURL}/status`)
-  data = await data.json()
-  if (data.authorized) {
+  let res = await fetch(`${apiURL}/status`)
+  res = await res.json()
+  if (res.authorized) {
     renderLoggedIn()
-    testAPI()
-    getIssues()
+    // getIssues()
   } else console.log('Not authorized')
 }
 
-checkAuthorization()
+// checkAuthorization()
+
+renderLoggedIn()

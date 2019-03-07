@@ -27,9 +27,7 @@ apiController.paths = async (req, res, next) => {
   if (Object.keys(req.query).length > 0) params += '?' + require('querystring').stringify(req.query)
   console.log(params)
   let result = await api.fetchGithub(params, req.session.access_token)
-  res.json({
-    result: result
-  })
+  res.json(result)
 }
 
 // Exports.
