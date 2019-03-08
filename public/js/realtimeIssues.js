@@ -1,4 +1,5 @@
 /* global $, fetch */
+'use strict'
 
 const apiURI = '/api/'
 let userData = {}
@@ -103,7 +104,9 @@ async function checkAuthorization () {
   res = await res.json()
   if (res.authorized) {
     renderRepos()
-  } else console.log('Not authorized')
+  } else {
+    $('#logged-in-banner .hide').removeClass('hide')
+  }
 }
 
 checkAuthorization()

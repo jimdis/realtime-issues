@@ -10,9 +10,10 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+  <script src="js/checkSession.js"></script>
 </head>
 
-<div class="section no-pad-bot" id="index-banner">
+<div class="section no-pad-bot hide" id="index-banner">
   <div class="container">
     <br><br>
     <h1 class="header center orange-text">Realtime Issues</h1>
@@ -22,15 +23,22 @@
     <div class="row center">
       <a href="/auth" class="btn-large waves-effect waves-light blue">Log in with your GitHub Account »</a>
     </div>
-    <br><br>
-
   </div>
 </div>
+
+<div class="section no-pad-bot" id="logged-in-banner">
+  <div class="container">
+    <h2 class="header orange-text">Realtime Issues</h1>
+      <p class="flow-text hide">There was a problem authorizing you through GitHub.</p>
+      <a href="/auth" class="btn-large waves-effect waves-light blue hide">Authorize again »</a>
+  </div>
+</div>
+<br>
 
 <div id="issuesDiv"></div>
 
 <div class="fixed-action-btn hide">
-  <a class="btn-floating btn-large waves-effect waves-light red tooltipped" data-position="left" data-tooltip="Log Out!"><i class="material-icons">exit_to_app</i></a>
+  <a href="/auth/logout" class="btn-floating btn-large waves-effect waves-light red tooltipped" data-position="left" data-tooltip="Log Out!"><i class="material-icons">exit_to_app</i></a>
 </div>
 
 <footer class="page-footer orange">

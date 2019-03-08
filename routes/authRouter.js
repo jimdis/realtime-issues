@@ -21,5 +21,11 @@ router.get('/callback', controller.callback)
 // GET /status
 router.get('/status', controller.status)
 
+// GET /status
+router.get('/session', controller.session)
+
+// GET /logout
+router.get('/logout', controller.logout)
+
 // Exports.
 module.exports = router

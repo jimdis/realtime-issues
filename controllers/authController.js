@@ -71,11 +71,38 @@ authController.callback = async (req, res, next) => {
  * /status GET
  */
 authController.status = async (req, res, next) => {
-  let status = await api.authorizeUser(process.env.CLIENT_ID, process.env.CLIENT_SECRET, req.session.access_token)
+  if (!req.session.access_token) {
+    res.json({ authorized: false })
+  } else {
+    let response = await api.authorizeUser(process.env.CLIENT_ID, process.env.CLIENT_SECRET, req.session.access_token)
+    console.log(response.status)
+    if (response.status === 200) {
+      let body = await response.json()
+      req.session.username = body.user.login
+      res.json({ authorized: true, username: req.session.username })
+    } else res.json({ authorized: false })
+  }
+}
+
+/**
+ * /session GET
+ */
+authController.session = async (req, res, next) => {
+  if (req.session.access_token) {
+    res.json({ active: true })
+  } else res.json({ active: false })
+}
+
+/**
+ * /logout GET
+ */
+authController.logout = async (req, res, next) => {
+  let status = await api.deleteToken(process.env.CLIENT_ID, process.env.CLIENT_SECRET, req.session.access_token)
   console.log(status)
-  if (status === 200) {
-    res.json({ authorized: true })
-  } else res.json({ authorized: false })
+  if (status === 204) {
+    req.session.destroy(err => { if (err) res.json({ error_session: err }) })
+    res.redirect('/')
+  } else res.json({ error_status: status })
 }
 
 // Exports.
