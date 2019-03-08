@@ -10,30 +10,76 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
-  <script src="js/checkSession.js"></script>
 </head>
 
-<div class="section no-pad-bot hide" id="index-banner">
+<div class="section no-pad-bot" id="index-banner">
   <div class="container">
     <br><br>
     <h1 class="header center orange-text">Realtime Issues</h1>
     <div class="row center">
-      <h5 class="header col s12 light">List all open issues across your GitHub Repos. In realtime.</h5>
+      <h5 class="header col s12 light hide" id="subTitle">List all open issues across your GitHub Repos. In realtime.</h5>
+      <p class="flow-text hide" id="errorMessage">There was a problem authorizing your GitHub Account</p>
     </div>
     <div class="row center">
-      <a href="/auth" class="btn-large waves-effect waves-light blue">Log in with your GitHub Account »</a>
+      <a href="/auth" class="btn-large waves-effect waves-light blue hide" id="mainButton">Log in with your GitHub Account »</a>
     </div>
   </div>
 </div>
 
-<div class="section no-pad-bot" id="logged-in-banner">
-  <div class="container">
-    <h2 class="header orange-text">Realtime Issues</h1>
-      <p class="flow-text hide">There was a problem authorizing you through GitHub.</p>
-      <a href="/auth" class="btn-large waves-effect waves-light blue hide">Authorize again »</a>
+<div class="row center">
+  <div id="main-preloader">
+    <p class="flow-text">Loading content...</p>
+    <div class="preloader-wrapper big active">
+      <div class="spinner-layer spinner-blue">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div>
+        <div class="gap-patch">
+          <div class="circle"></div>
+        </div>
+        <div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+
+      <div class="spinner-layer spinner-red">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div>
+        <div class="gap-patch">
+          <div class="circle"></div>
+        </div>
+        <div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+
+      <div class="spinner-layer spinner-yellow">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div>
+        <div class="gap-patch">
+          <div class="circle"></div>
+        </div>
+        <div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+
+      <div class="spinner-layer spinner-green">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div>
+        <div class="gap-patch">
+          <div class="circle"></div>
+        </div>
+        <div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-<br>
 
 <div id="issuesDiv"></div>
 
@@ -80,17 +126,24 @@
 <!--   Templates   -->
 <template id="reposTemplate">
   <div class="container">
-    <div class="preloader-wrapper big active">
-      <div class="spinner-layer spinner-blue-only">
-        <div class="circle-clipper left">
-          <div class="circle"></div>
+    <div id="user-preloader" class="row">
+      <div class="col s2">
+        <div class="preloader-wrapper big active">
+          <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
         </div>
-        <div class="gap-patch">
-          <div class="circle"></div>
-        </div>
-        <div class="circle-clipper right">
-          <div class="circle"></div>
-        </div>
+      </div>
+      <div class="col s10">
+        <p class="flow-text">Fetching User Data...</p>
       </div>
     </div>
     <div class="row" id="issues-wrapper">
@@ -99,12 +152,12 @@
           <img src="" alt="" class="circle responsive-img left-align gh-avatar">
         </div>
         <div class="col s10">
-          <h5 id="gh-name-repos" class="flow-text">Fetching user data...</h5>
+          <h5 id="gh-name-repos" class="flow-text"></h5>
         </div>
       </div>
       <div class="col s6">
-        <div class="collection">
-          <a href="#" id="progressBar" class="collection-item hide">
+        <div class="collection hide">
+          <a href="#" id="repo-preloader" class="collection-item">
             <div class="section">
               <h5 class="truncate">Fetching list of repos...</h5>
               <div class="progress">
@@ -133,7 +186,7 @@
       <li class="collection-header grey lighten-4">
         <h5 class="title flow-text"></h5>
       </li>
-      <li class="collection-item avatar" id="progressBar">
+      <li class="collection-item avatar" id="issues-preloader">
         <i class="material-icons circle">account_circle</i>
         <span class="truncate">Fetching issues...</span>
         <div class="progress">

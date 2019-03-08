@@ -58,9 +58,13 @@ async function renderRepos () {
   $('.tooltipped').tooltip()
   $('#issuesDiv').append($('#reposTemplate').html())
   await getUserData()
-  $('#progressBar').toggleClass('hide')
+  $('#user-preloader').remove()
+  $('#issuesDiv .collection').removeClass('hide')
+  $('#issuesDiv img.gh-avatar').attr('src', userData.avatar)
+  $('#gh-name-repos').text(`${userData.name}'s Repos with open issues`)
+  // $('#repo-preloader').toggleClass('hide')
   await getUserRepos()
-  $('#progressBar').remove()
+  $('#repo-preloader').remove()
   userData.repos.forEach(repo => {
     let temp = document.querySelector('#repoListTemplate').content.cloneNode(true)
     temp.querySelector('.repo-title').textContent = `Repo: ${repo.full_name}`
@@ -68,9 +72,6 @@ async function renderRepos () {
     temp.querySelector('a').setAttribute('data-issues', repo.full_name)
     $('#issuesDiv div.collection').append(temp)
   })
-  $('#issuesDiv div.preloader-wrapper').remove()
-  $('#issuesDiv img.gh-avatar').attr('src', userData.avatar)
-  $('#gh-name-repos').text(`${userData.name}'s Repos with open issues`)
   // Event listeners for clicks
   $('#issuesDiv div.collection a').click((e) => {
     e.preventDefault()
@@ -86,7 +87,7 @@ async function renderIssues (repoName) {
   $('#issuesCollection .title').text(`Issues in ${repoName}`)
   let repo = userData.repos.find(repo => repo.full_name === repoName)
   if (!repo.issues) await getIssues(repo)
-  $('#progressBar').remove()
+  $('#issues-preloader').remove()
   repo.issues.forEach(issue => {
     let li = document.querySelector('#issuesListTemplate').content.cloneNode(true)
     li.querySelector('.title').textContent = issue.title
@@ -102,11 +103,22 @@ async function checkAuthorization () {
   console.log('running checkAuth')
   let res = await fetch(`auth/status`)
   res = await res.json()
+  $('#main-preloader').remove()
   if (res.authorized) {
     renderRepos()
   } else {
-    $('#logged-in-banner .hide').removeClass('hide')
+    $('#errorMessage, #mainButton').removeClass('hide')
+    $('#mainButton').text('Authorize again through GitHub»')
   }
 }
 
-checkAuthorization()
+async function checkSession () {
+  let res = await fetch(`auth/session`)
+  res = await res.json()
+  if (!res.active) {
+    $('#subTitle, #mainButton').removeClass('hide')
+    $('#main-preloader').remove()
+  } else checkAuthorization()
+}
+
+checkSession()
