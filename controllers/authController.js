@@ -71,7 +71,8 @@ authController.callback = async (req, res, next) => {
  * /status GET
  */
 authController.status = async (req, res, next) => {
-  let status = await api.authorizeUser(req.session.access_token)
+  let status = await api.authorizeUser(process.env.CLIENT_ID, process.env.CLIENT_SECRET, req.session.access_token)
+  console.log(status)
   if (status === 200) {
     res.json({ authorized: true })
   } else res.json({ authorized: false })

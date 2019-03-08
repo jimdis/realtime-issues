@@ -53,6 +53,8 @@ async function getIssues (repo) {
 }
 
 async function renderRepos () {
+  $('.fixed-action-btn').removeClass('hide')
+  $('.tooltipped').tooltip()
   $('#issuesDiv').append($('#reposTemplate').html())
   await getUserData()
   $('#progressBar').toggleClass('hide')
@@ -101,10 +103,7 @@ async function checkAuthorization () {
   res = await res.json()
   if (res.authorized) {
     renderRepos()
-    // getIssues()
   } else console.log('Not authorized')
 }
 
-// checkAuthorization()
-
-renderRepos()
+checkAuthorization()
