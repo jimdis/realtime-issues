@@ -136,14 +136,14 @@
             <img src="" alt="" class="circle responsive-img left-align gh-avatar">
           </div>
           <div class="col s10">
-            <h5 id="gh-name-repos">Fetching user data...</h5>
+            <h5 id="gh-name-repos" class="flow-text">Fetching user data...</h5>
           </div>
         </div>
         <div class="col s6">
           <div class="collection">
             <a href="#" id="progressBar" class="collection-item hide">
               <div class="section">
-                <h5>Fetching list of repos...</h5>
+                <h5 class="truncate">Fetching list of repos...</h5>
                 <div class="progress">
                   <div class="indeterminate"></div>
                 </div>
@@ -158,7 +158,7 @@
     <a href="#!" class="collection-item">
       <div class="section">
         <i class="material-icons right">list</i>
-        <h5 class="repo-title"></h5>
+        <h5 class="repo-title flow-text"></h5>
         <p class="repo-description"></p>
       </div>
     </a>
@@ -168,10 +168,10 @@
     <div class="col s6" id="issuesCollection">
       <ul class="collection with-header">
         <li class="collection-header grey lighten-4">
-          <h5 class="title"></h5>
+          <h5 class="title flow-text"></h5>
         </li>
         <li class="collection-item avatar" id="progressBar">
-          <p>Fetching issues...</p>
+          <p class="truncate">Fetching issues...</p>
           <i class="material-icons circle">account_circle</i>
           <div class="progress">
             <div class="indeterminate"></div>
@@ -183,10 +183,10 @@
 
   <template id="issuesListTemplate">
     <li class="collection-item avatar">
-      <i class="material-icons circle">account_circle</i>
-      <span class="title"></span>
-      <p></p>
-      <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+      <img src="" alt="issues opener avatar" class="circle responsive-img left-align gh-avatar">
+      <span class="title truncate"></span>
+      <p class="body truncate text-lighten-2"></p>
+      <a href="" target="_blank" class="secondary-content"><i class="material-icons">grade</i></a>
     </li>
   </template>
 

@@ -39,12 +39,14 @@ async function getUserRepos () {
 
 async function getIssues (repo) {
   let res = await getData(`repos/${repo.full_name}/issues`)
-  console.log(repo)
   let issues = []
   res.forEach(issue => {
-    console.log('getIssues: ', issue)
     let obj = {}
     obj.title = issue.title
+    obj.username = issue.user.login
+    obj.avatar = issue.user.avatar_url
+    obj.body = issue.body
+    obj.url = issue.html_url
     issues.push(obj)
   })
   repo.issues = issues
@@ -63,13 +65,17 @@ async function renderRepos () {
     temp.querySelector('a').setAttribute('data-issues', repo.full_name)
     $('#issuesDiv div.collection').append(temp)
   })
-  $('#issuesDiv div.collection a').click((e) => {
-    $('#issuesCollection').remove()
-    renderIssues(e.currentTarget.getAttribute('data-issues'))
-  })
   $('#issuesDiv div.preloader-wrapper').remove()
   $('#issuesDiv img.gh-avatar').attr('src', userData.avatar)
   $('#gh-name-repos').text(`${userData.name}'s Repos with open issues`)
+  // Event listeners for clicks
+  $('#issuesDiv div.collection a').click((e) => {
+    e.preventDefault()
+    $('#issuesCollection').remove()
+    $('a.collection-item').removeClass('active')
+    $(e.currentTarget).addClass('active')
+    renderIssues($(e.currentTarget).data('issues'))
+  })
 }
 
 async function renderIssues (repoName) {
@@ -81,6 +87,10 @@ async function renderIssues (repoName) {
   repo.issues.forEach(issue => {
     let li = document.querySelector('#issuesListTemplate').content.cloneNode(true)
     li.querySelector('.title').textContent = issue.title
+    li.querySelector('img.gh-avatar').src = issue.avatar
+    li.querySelector('img.gh-avatar').title = issue.username
+    li.querySelector('p.body').textContent = issue.body ? issue.body : 'No description provided :('
+    li.querySelector('a.secondary-content').href = issue.url
     $('#issuesCollection ul').append(li)
   })
 }
