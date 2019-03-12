@@ -1,11 +1,29 @@
-/* global $, fetch, io */
+/* global $, M, fetch, io */
 'use strict'
 
 const apiURI = '/api/'
 let userData = {}
 let socket = io()
 
-socket.on('issue', (msg) => console.log(msg))
+socket.on('issue', (body) => {
+  console.log(body)
+  renderIssueCard(body)
+})
+$('#testToast').click(() => renderIssueCard(
+  {
+    action: 'closed',
+    sender: { login: 'jimdis', avatar_url: 'https://avatars0.githubusercontent.com/u/42964925?v=4' },
+    repository: { name: 'jd222qe-examination3' }
+  }
+))
+
+function renderIssueCard (body) {
+  let temp = document.querySelector('#newIssueTemplate').content.cloneNode(true)
+  temp.querySelector('.newIssueTitle').textContent = `Issue ${body.action}`
+  temp.querySelector('.gh-avatar').src = body.sender.avatar_url
+  temp.querySelector('.newIssueBody').textContent = `${body.sender.login} just ${body.action} an issue in ${body.repository.name}`
+  $('#newIssuesDiv').append(temp)
+}
 
 async function testAPI () {
   // let res = await fetch(`/api/search/issues?q=author:${username}`)
