@@ -8,7 +8,7 @@
 'use strict'
 
 const api = require('../lib/api')
-
+const socket = require('../lib/socket')
 const apiController = {}
 
 /**
@@ -16,6 +16,14 @@ const apiController = {}
  */
 apiController.index = (req, res, next) => {
   res.json({ usage: 'api/<path>' })
+}
+
+/**
+ * index POST
+ */
+apiController.indexPost = (req, res, next) => {
+  socket.send(req.body)
+  res.json(req.body)
 }
 
 /**

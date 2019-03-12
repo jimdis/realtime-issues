@@ -16,6 +16,9 @@ const logger = require('morgan')
 const favicon = require('serve-favicon')
 
 const app = express()
+const http = require('http').Server(app)
+const io = require('socket.io')(http)
+require('./lib/socket').init((io))
 
 // Initiate & configure helmet
 // app.use(helmet())
@@ -38,6 +41,7 @@ const app = express()
 // additional middleware
 app.use(logger('dev'))
 app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
@@ -83,4 +87,4 @@ app.use((err, req, res, next) => {
   res.send(message)
 })
 
-app.listen(3000, () => console.log('Server running at http://localhost:3000/'))
+http.listen(3000, () => console.log('Server running at http://localhost:3000/'))

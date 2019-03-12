@@ -15,6 +15,9 @@ const controller = require('../controllers/apiController')
 // GET /
 router.get('/', controller.index)
 
+// POST /
+router.post('/', controller.indexPost)
+
 // GET /paths
 router.get('/*', controller.paths)
 

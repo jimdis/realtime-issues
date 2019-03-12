@@ -1,8 +1,9 @@
-/* global $, fetch */
+/* global $, fetch, io */
 'use strict'
 
 const apiURI = '/api/'
 let userData = {}
+let socket = io()
 
 async function testAPI () {
   // let res = await fetch(`/api/search/issues?q=author:${username}`)
