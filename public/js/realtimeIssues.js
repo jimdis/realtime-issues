@@ -5,6 +5,8 @@ const apiURI = '/api/'
 let userData = {}
 let socket = io()
 
+socket.on('issue', (msg) => console.log(msg))
+
 async function testAPI () {
   // let res = await fetch(`/api/search/issues?q=author:${username}`)
   let res = await fetch(`/api/repos/jimdis/jd222qe_1dv600/issues`)

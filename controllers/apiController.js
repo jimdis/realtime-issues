@@ -8,8 +8,26 @@
 'use strict'
 
 const api = require('../lib/api')
-const socket = require('../lib/socket')
+const io = require('../lib/socket')
+const crypto = require('crypto')
+// Load .env-file to environment.
+require('dotenv').config()
+
 const apiController = {}
+
+/**
+ * Verify GitHub signature middleware
+ */
+apiController.verifySignature = (req, res, next) => {
+  let secret = process.env.WH_SECRET
+  let ghSign = Buffer.from(req.get('X-Hub-Signature'))
+  let compSign = Buffer.from('sha1=' + crypto.createHmac('sha1', secret)
+    .update(JSON.stringify(req.body)).digest('hex'))
+
+  if (crypto.timingSafeEqual(ghSign, compSign)) {
+    next()
+  } else res.status(401).send('Signature does not match')
+}
 
 /**
  * index GET
@@ -22,7 +40,7 @@ apiController.index = (req, res, next) => {
  * index POST
  */
 apiController.indexPost = (req, res, next) => {
-  socket.send(req.body)
+  io.sockets.emit('issue', req.body)
   res.json(req.body)
 }
 
