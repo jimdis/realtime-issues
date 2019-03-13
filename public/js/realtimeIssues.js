@@ -83,6 +83,7 @@ async function getIssues (repo) {
     obj.avatar = issue.user.avatar_url
     obj.body = issue.body
     obj.url = issue.html_url
+    obj.comments = issue.comments
     issues.push(obj)
   })
   repo.issues = issues
@@ -129,10 +130,11 @@ async function renderIssues (repoID) {
   repo.issues.forEach(issue => {
     let li = document.querySelector('#issuesListTemplate').content.cloneNode(true)
     li.querySelector('.title').textContent = issue.title
-    li.querySelector('img.gh-avatar').src = issue.avatar
-    li.querySelector('img.gh-avatar').title = issue.username
-    li.querySelector('p.body').textContent = issue.body ? issue.body : 'No description provided :('
-    li.querySelector('a.secondary-content').href = issue.url
+    li.querySelector('.gh-avatar').src = issue.avatar
+    li.querySelector('.gh-avatar').title = issue.username
+    li.querySelector('.body').textContent = issue.body ? issue.body : 'No description provided :('
+    li.querySelector('a').href = issue.url
+    li.querySelector('.badge').textContent = issue.comments
     $('#issues-wrapper .issuesCollection ul').append(li)
   })
 }
