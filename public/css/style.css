@@ -1,5 +1,16 @@
 #newIssuesDiv {
-    position: fixed;
+    position: absolute;
     top: 20px;
+    right: 10px;
     z-index: 996;
+}
+
+#newIssuesDiv .card-content .row {
+    margin-bottom: 0;
+}
+
+@media only screen and (max-width: 600px) {
+    .row.valign-wrapper {
+        display: inherit;
+    }
 }

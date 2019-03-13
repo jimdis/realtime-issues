@@ -120,7 +120,7 @@ async function renderRepos () {
 async function renderIssues (repoID) {
   let repo = userData.repos.find(repo => repo.id === repoID)
   $('#issues-wrapper .issuesCollection').remove()
-  $('#issues-wrapper').append($('#issuesTemplate').html())
+  $('#reposHeader').after($('#issuesTemplate').html())
   $('#issues-wrapper .issuesCollection').attr('id', `issues-${repo.id}`)
   $('#issues-wrapper .issuesCollection .title').text(`Issues in ${repo.full_name}`)
 
