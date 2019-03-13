@@ -5,24 +5,36 @@ const apiURI = '/api/'
 let userData = {}
 let socket = io()
 
-socket.on('issue', (body) => {
-  console.log(body)
-  renderIssueCard(body)
+socket.on('issue', async (msg) => {
+  console.log(msg)
+  renderIssueCard(msg)
+  let repo = userData.repos.find(repo => repo.id === msg.repository.id)
+  await getIssues(repo)
+  // Re-render list of issues if currently visible
+  if (document.querySelector(`#issues-${repo.id}`)) renderIssues(repo.id)
 })
-$('#testToast').click(() => renderIssueCard(
+$('#index-banner .header').click(() => renderIssueCard(
   {
     action: 'closed',
+    issue: { id: 12345, html_url: 'https://github.com/1dv023/jd222qe-examination-3/issues/5' },
     sender: { login: 'jimdis', avatar_url: 'https://avatars0.githubusercontent.com/u/42964925?v=4' },
     repository: { name: 'jd222qe-examination3' }
   }
 ))
 
-function renderIssueCard (body) {
+function renderIssueCard (data) {
   let temp = document.querySelector('#newIssueTemplate').content.cloneNode(true)
-  temp.querySelector('.newIssueTitle').textContent = `Issue ${body.action}`
-  temp.querySelector('.gh-avatar').src = body.sender.avatar_url
-  temp.querySelector('.newIssueBody').textContent = `${body.sender.login} just ${body.action} an issue in ${body.repository.name}`
+  let id = `card-${Math.random().toString(36).replace('0.', '')}`
+  temp.firstElementChild.id = id
+  temp.querySelector('.newIssueTitle').textContent = `Issue ${data.action}`
+  temp.querySelector('.gh-avatar').src = data.sender.avatar_url
+  temp.querySelector('.newIssueBody').textContent = `${data.sender.login} just ${data.action} an issue in ${data.repository.name}`
+  temp.querySelector('.newIssueGoto').href = data.issue.html_url
   $('#newIssuesDiv').append(temp)
+  $(`#${id} .newIssueDismiss`).click((e) => {
+    e.preventDefault()
+    $(`#${id}`).remove()
+  })
 }
 
 async function testAPI () {
@@ -52,6 +64,7 @@ async function getUserRepos () {
   res.forEach(repo => {
     if (repo.open_issues_count > 0) {
       let obj = {}
+      obj.id = repo.id
       obj.full_name = repo.full_name
       obj.description = repo.description
       userData.repos.push(obj)
@@ -64,6 +77,7 @@ async function getIssues (repo) {
   let issues = []
   res.forEach(issue => {
     let obj = {}
+    obj.id = issue.id
     obj.title = issue.title
     obj.username = issue.user.login
     obj.avatar = issue.user.avatar_url
@@ -90,23 +104,26 @@ async function renderRepos () {
     let temp = document.querySelector('#repoListTemplate').content.cloneNode(true)
     temp.querySelector('.repo-title').textContent = `Repo: ${repo.full_name}`
     temp.querySelector('.repo-description').textContent = repo.description
-    temp.querySelector('a').setAttribute('data-issues', repo.full_name)
+    temp.querySelector('a').setAttribute('data-issues', repo.id)
     $('#issuesDiv div.collection').append(temp)
   })
   // Event listeners for clicks
   $('#issuesDiv div.collection a').click((e) => {
     e.preventDefault()
-    $('#issuesCollection').remove()
+
     $('a.collection-item').removeClass('active')
     $(e.currentTarget).addClass('active')
     renderIssues($(e.currentTarget).data('issues'))
   })
 }
 
-async function renderIssues (repoName) {
+async function renderIssues (repoID) {
+  let repo = userData.repos.find(repo => repo.id === repoID)
+  $('#issues-wrapper .issuesCollection').remove()
   $('#issues-wrapper').append($('#issuesTemplate').html())
-  $('#issuesCollection .title').text(`Issues in ${repoName}`)
-  let repo = userData.repos.find(repo => repo.full_name === repoName)
+  $('#issues-wrapper .issuesCollection').attr('id', `issues-${repo.id}`)
+  $('#issues-wrapper .issuesCollection .title').text(`Issues in ${repo.full_name}`)
+
   if (!repo.issues) await getIssues(repo)
   $('#issues-preloader').remove()
   repo.issues.forEach(issue => {
@@ -116,7 +133,7 @@ async function renderIssues (repoName) {
     li.querySelector('img.gh-avatar').title = issue.username
     li.querySelector('p.body').textContent = issue.body ? issue.body : 'No description provided :('
     li.querySelector('a.secondary-content').href = issue.url
-    $('#issuesCollection ul').append(li)
+    $('#issues-wrapper .issuesCollection ul').append(li)
   })
 }
 

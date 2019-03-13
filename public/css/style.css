@@ -1,4 +1,5 @@
 #newIssuesDiv {
     position: fixed;
     top: 20px;
+    z-index: 996;
 }
