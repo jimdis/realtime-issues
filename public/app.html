@@ -206,7 +206,7 @@
     <div class="col s12 m6 push-m6 issuesCollection">
       <ul class="collection with-header">
         <li class="collection-header grey lighten-4">
-          <a href="#" class="notificationIcon tooltipped" data-position="bottom" data-tooltip="Add Alert for issues!"><span class="new badge red" data-badge-caption="Off">Alerts:</span></a>
+          <a href="#"><span class="new badge red tooltipped notificationIcon" data-position="top" data-tooltip="Add issue notifications for this repo" data-badge-caption="Off">Alerts:</span></a>
           <h5 class="title flow-text"></h5>
         </li>
         <li class="collection-item avatar" id="issues-preloader">
@@ -222,11 +222,12 @@
 
   <template id="issuesListTemplate">
     <li class="collection-item avatar">
-      <img src="" alt="issues opener avatar" class="circle responsive-img left-align gh-avatar">
-      <a href="" target="_blank"><span class="new badge" data-badge-caption="comments"></span></a>
-      <span class="title truncate"></span>
-      <p class="body truncate grey-text"></p>
-
+      <a href="" target="_blank">
+        <img src="" alt="issues opener avatar" class="circle responsive-img left-align gh-avatar">
+        <span class="new badge" data-badge-caption="comments"></span>
+        <span class="title truncate"></span>
+        <p class="body grey-text"></p>
+      </a>
     </li>
   </template>
 
@@ -246,8 +247,8 @@
         </div>
       </div>
       <div class="card-action">
-        <a href="" class="newIssueGoto" target="_blank">View Issue</a>
-        <a href="#" class="newIssueDismiss">Dismiss</a>
+        <a href="" class="newIssueGoto " target="_blank">View <i class="material-icons tiny">open_in_new</i></a>
+        <a href="#" class="newIssueDismiss">Close</a>
       </div>
     </div>
   </template>

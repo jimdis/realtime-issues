@@ -1,5 +1,5 @@
 #newIssuesDiv {
-    position: absolute;
+    position: fixed;
     top: 20px;
     right: 10px;
     z-index: 996;
@@ -9,11 +9,11 @@
     margin-bottom: 0;
 }
 
-#issues-wrapper .issuesCollection .notificationIcon {
+/* #issues-wrapper .issuesCollection .notificationIcon {
     position: absolute;
     top: 5px;
     right: 5px;
-}
+} */
 
 @media only screen and (max-width: 600px) {
     .row.valign-wrapper {
