@@ -9,9 +9,11 @@
     margin-bottom: 0;
 }
 
-/* #issues-wrapper .collection-item .body {
-    color: grey;
-} */
+#issues-wrapper .issuesCollection .notificationIcon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
 
 @media only screen and (max-width: 600px) {
     .row.valign-wrapper {

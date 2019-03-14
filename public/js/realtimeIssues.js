@@ -7,20 +7,24 @@ let socket = io()
 
 socket.on('issue', async (msg) => {
   console.log(msg)
-  renderIssueCard(msg)
-  let repo = userData.repos.find(repo => repo.id === msg.repository.id)
-  await getIssues(repo)
-  // Re-render list of issues if currently visible
-  if (document.querySelector(`#issues-${repo.id}`)) renderIssues(repo.id)
-})
-$('#index-banner .header').click(() => renderIssueCard(
-  {
-    action: 'closed',
-    issue: { id: 12345, html_url: 'https://github.com/1dv023/jd222qe-examination-3/issues/5' },
-    sender: { login: 'jimdis', avatar_url: 'https://avatars0.githubusercontent.com/u/42964925?v=4' },
-    repository: { name: 'jd222qe-examination3' }
+  // Check if msg is related to an issue
+  if (msg.issue) {
+    renderIssueCard(msg)
+    let repo = userData.repos.find(repo => repo.id === msg.repository.id)
+    await getIssues(repo)
+    // Re-render list of issues if currently visible
+    if (document.querySelector(`#issues-${repo.id}`)) renderIssues(repo.id)
   }
-))
+})
+
+// $('#index-banner .header').click(() => renderIssueCard(
+//   {
+//     action: 'closed',
+//     issue: { id: 12345, html_url: 'https://github.com/1dv023/jd222qe-examination-3/issues/5' },
+//     sender: { login: 'jimdis', avatar_url: 'https://avatars0.githubusercontent.com/u/42964925?v=4' },
+//     repository: { name: 'jd222qe-examination3' }
+//   }
+// ))
 
 function renderIssueCard (data) {
   let temp = document.querySelector('#newIssueTemplate').content.cloneNode(true)
@@ -67,9 +71,15 @@ async function getUserRepos () {
       obj.id = repo.id
       obj.full_name = repo.full_name
       obj.description = repo.description
+      obj.hooks_url = repo.hooks_url
       userData.repos.push(obj)
     }
   })
+}
+
+async function getRepoHooks (url) {
+  let res = await getData(url)
+  console.log('Hooks:', res)
 }
 
 async function getIssues (repo) {
@@ -87,6 +97,18 @@ async function getIssues (repo) {
     issues.push(obj)
   })
   repo.issues = issues
+}
+
+async function createWebHook (repoFullName) {
+  let res = await fetch(`api/repo/?wh=true&path=${repoFullName}&action=create`)
+  res = await res.json()
+  if (res.active) return res
+}
+
+async function deleteWebHook (repoFullName, hookID) {
+  let res = await fetch(`api/repo/?wh=true&path=${repoFullName}&action=delete&id=${hookID}`)
+  console.log('DELETE WH RES STATUS', res)
+  if (res.status === 204) return true
 }
 
 async function renderRepos () {
@@ -137,6 +159,38 @@ async function renderIssues (repoID) {
     li.querySelector('.badge').textContent = issue.comments
     $('#issues-wrapper .issuesCollection ul').append(li)
   })
+
+  $('#issues-wrapper .notificationIcon').tooltip()
+  $('#issues-wrapper .notificationIcon').click((e) => {
+    e.preventDefault()
+    toggleWebHook(repo)
+  })
+}
+
+async function toggleWebHook (repo) {
+  if (!repo.hookID) {
+    let res = await createWebHook(repo.full_name)
+    if (res) {
+      repo.hookID = res.id
+      $('#issues-wrapper .notificationIcon .badge').removeClass('red')
+      $('#issues-wrapper .notificationIcon .badge').addClass('green')
+      $('#issues-wrapper .notificationIcon .badge').attr('data-badge-caption', 'on')
+      M.toast({ html: '<span class="green-text">Alert created!</span>' })
+    } else {
+      M.toast({ html: '<span class="red-text">There was a problem creating the alert</span>' })
+    }
+  } else {
+    let res = await deleteWebHook(repo.full_name, repo.hookID)
+    if (res) {
+      repo.hookID = null
+      $('#issues-wrapper .notificationIcon .badge').removeClass('green')
+      $('#issues-wrapper .notificationIcon .badge').addClass('red')
+      $('#issues-wrapper .notificationIcon .badge').attr('data-badge-caption', 'off')
+      M.toast({ html: '<span class="green-text">Alert removed!</span>' })
+    } else {
+      M.toast({ html: '<span class="red-text">There was a problem removing the alert</span>' })
+    }
+  }
 }
 
 async function checkAuthorization () {

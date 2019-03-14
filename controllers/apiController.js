@@ -48,12 +48,25 @@ apiController.indexPost = (req, res, next) => {
  * paths GET
  */
 apiController.paths = async (req, res, next) => {
-  console.log(req.query)
-  let params = req.path
-  if (Object.keys(req.query).length > 0) params += '?' + require('querystring').stringify(req.query)
-  console.log(params)
-  let result = await api.fetchGithub(params, req.session.access_token)
-  res.json(result)
+  if (req.query.wh) {
+    if (req.query.action === 'create') {
+      let result = await api.createWebHook(req.query.path, process.env.WH_SECRET, req.session.access_token)
+      res.json(result)
+    }
+    if (req.query.action === 'delete') {
+      let status = await api.deleteWebHook(req.query.path, req.query.id, req.session.access_token)
+      if (status === 204) {
+        res.status(204).end()
+      } else res.status(400).end()
+    }
+  } else {
+    console.log(req.query)
+    let params = req.path
+    if (Object.keys(req.query).length > 0) params += '?' + require('querystring').stringify(req.query)
+    console.log(params)
+    let result = await api.fetchGithub(params, req.session.access_token)
+    res.json(result)
+  }
 }
 
 // Exports.
