@@ -80,8 +80,7 @@ async function createWebHook (repoFullName) {
 
 async function deleteWebHook (repoFullName, hookID) {
   let res = await fetch(`api/repo/?wh=true&path=${repoFullName}&action=delete&id=${hookID}`)
-  console.log('DELETE WH RES STATUS', res)
-  if (res.status === 204) return true
+  return res.status === 204
 }
 
 async function renderRepos () {
@@ -106,7 +105,7 @@ async function renderRepos () {
     $('#issuesDiv div.collection').append(temp)
     getRepoHooks(repo)
   })
-  // Event listeners for clicks
+  // Event listeners to open issues-list
   $('#issuesDiv div.collection a').click((e) => {
     e.preventDefault()
 
@@ -134,16 +133,17 @@ async function renderIssues (repoID) {
     li.querySelector('a').href = issue.url
     li.querySelector('.badge').textContent = issue.comments
     $('#issues-wrapper .issuesCollection ul').append(li)
-    li.addEventListener('click', () => {
-      let title = issue.title
-      console.log('you clicked', title)
-    })
   })
 
   $('#issues-wrapper .tooltipped').tooltip()
   $('#issues-wrapper .notificationIcon').click((e) => {
     e.preventDefault()
     toggleWebHook(repo)
+  })
+  $('#issues-wrapper .issueListClose').click((e) => {
+    e.preventDefault()
+    $('a.collection-item').removeClass('active')
+    $('#issues-wrapper .issuesCollection').remove()
   })
 }
 

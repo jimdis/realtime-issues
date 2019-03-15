@@ -150,7 +150,7 @@
                 </div>
             </div> <!-- / Header with image -->
 
-            <div class="col s12 m6 push-m6 issuesCollection">
+            <div class="col s12 m6 push-m6">
             </div>
 
             <!--  Repos List -->
@@ -173,7 +173,7 @@
     <template id="repoListTemplate">
         <a href="#!" class="collection-item">
             <div class="section">
-                <i class="material-icons right">list</i>
+                <i class="material-icons right">view_list</i>
                 <h5 class="repo-title flow-text"></h5>
                 <p class="repo-description"></p>
             </div>
@@ -184,6 +184,7 @@
         <div class="col s12 m6 push-m6 issuesCollection">
             <ul class="collection with-header">
                 <li class="collection-header grey lighten-4">
+                    <a href="#" class="issueListClose tooltipped" data-position="top" data-tooltip="Close list"><i class="material-icons tiny left">close</i></a>
                     <a href="#"><span class="new badge red tooltipped notificationIcon" data-position="top" data-tooltip="Add issue notifications for this repo" data-badge-caption="Off">Alerts:</span></a>
                     <h5 class="title flow-text"></h5>
                 </li>
