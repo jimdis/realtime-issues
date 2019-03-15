@@ -1,3 +1,36 @@
+#index-banner .header {
+    color: #FF6B6B;
+    margin-top: 4px;
+}
+
+#index-banner.logged-in .header {
+    text-align: left;
+    margin-left: 10px;
+}
+
+#index-banner,
+#reposHeader.rendered {
+    margin-top: 10px;
+    border-top: 1px solid #ffd1d1;
+    border-bottom: 1px solid #ffd1d1;
+}
+
+#index-banner .btn-floating {
+    margin-left: 5px;
+}
+
+#reposHeader {
+    padding: 5px 0;
+}
+
+#reposHeader.rendered img {
+    border: 1px solid #FF6B6B
+}
+
+#newIssues-wrapper {
+    margin-bottom: 0;
+}
+
 #newIssuesDiv {
     position: fixed;
     top: 20px;
@@ -9,14 +42,38 @@
     margin-bottom: 0;
 }
 
-/* #issues-wrapper .issuesCollection .notificationIcon {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-} */
+#footer-realtime {
+    background-color: #ffd1d1;
+}
+
+/* Sticky footer */
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
 
 @media only screen and (max-width: 600px) {
-    .row.valign-wrapper {
+    #newIssuesDiv .row.valign-wrapper {
         display: inherit;
     }
+
+    main>div.container {
+        width: 100%;
+    }
+
+    #index-banner {
+        margin-top: 0;
+    }
+
+    #index-banner .header,
+    #index-banner.logged-in .header {
+        font-size: 1.5rem;
+    }
+
 }

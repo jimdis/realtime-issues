@@ -2,13 +2,13 @@
 'use strict'
 
 const apiURI = '/api/'
-const hookURL = 'https://71af2925.ngrok.io/api'
+const hookURL = 'https://65fc704f.ngrok.io/api'
 let userData = {}
 let socket = io()
 
+// Listens to issues through websocket and calls function to render issue card.
 socket.on('issue', async (msg) => {
-  console.log(msg)
-  // Check if msg is related to an issue
+  // Check if msg is related to an actual issue
   if (msg.issue) {
     renderIssueCard(msg)
     let repo = userData.repos.find(repo => repo.id === msg.repository.id)
@@ -17,28 +17,6 @@ socket.on('issue', async (msg) => {
     if (document.querySelector(`#issues-${repo.id}`)) renderIssues(repo.id)
   }
 })
-
-function renderIssueCard (data) {
-  let temp = document.querySelector('#newIssueTemplate').content.cloneNode(true)
-  let id = `card-${Math.random().toString(36).replace('0.', '')}`
-  temp.firstElementChild.id = id
-  temp.querySelector('.newIssueTitle').textContent = `${data.comment ? 'Comment' : 'Issue'} ${data.action}`
-  temp.querySelector('.gh-avatar').src = data.sender.avatar_url
-  temp.querySelector('.newIssueBody').textContent = `${data.sender.login} just ${data.action} ${data.comment ? ' a Comment' : 'an Issue'} in ${data.repository.name}`
-  temp.querySelector('.newIssueGoto').href = data.comment ? data.comment.html_url : data.issue.html_url
-  $('#newIssuesDiv').append(temp)
-  $(`#${id} .newIssueDismiss`).click((e) => {
-    e.preventDefault()
-    $(`#${id}`).remove()
-  })
-}
-
-async function testAPI () {
-  // let res = await fetch(`/api/search/issues?q=author:${username}`)
-  let res = await fetch(`/api/repos/jimdis/jd222qe_1dv600/issues`)
-  res = await res.json()
-  console.log('Test API: ', res)
-}
 
 async function getData (request) {
   console.log('Getting Data from: ' + request)
@@ -111,6 +89,8 @@ async function renderRepos () {
   $('.tooltipped').tooltip()
   $('#issuesDiv').append($('#reposTemplate').html())
   await getUserData()
+  $('#issues-wrapper').removeClass('hide')
+  $('#reposHeader').addClass('rendered')
   $('#user-preloader').remove()
   $('#issuesDiv .collection').removeClass('hide')
   $('#issuesDiv img.gh-avatar').attr('src', userData.avatar)
@@ -167,6 +147,21 @@ async function renderIssues (repoID) {
   })
 }
 
+function renderIssueCard (data) {
+  let temp = document.querySelector('#newIssueTemplate').content.cloneNode(true)
+  let id = `card-${Math.random().toString(36).replace('0.', '')}`
+  temp.firstElementChild.id = id
+  temp.querySelector('.newIssueTitle').textContent = `${data.comment ? 'Comment' : 'Issue'} ${data.action}`
+  temp.querySelector('.gh-avatar').src = data.sender.avatar_url
+  temp.querySelector('.newIssueBody').textContent = `${data.sender.login} just ${data.action} ${data.comment ? ' a Comment' : 'an Issue'} in ${data.repository.name}`
+  temp.querySelector('.newIssueGoto').href = data.comment ? data.comment.html_url : data.issue.html_url
+  $('#newIssuesDiv').append(temp)
+  $(`#${id} .newIssueDismiss`).click((e) => {
+    e.preventDefault()
+    $(`#${id}`).remove()
+  })
+}
+
 async function toggleWebHook (repo) {
   if (!repo.hookID) {
     let res = await createWebHook(repo.full_name)
@@ -204,24 +199,30 @@ function renderHookBadge (action) {
   }
 }
 
+// Checks if client has valid oauth-token on GH.
 async function checkAuthorization () {
-  console.log('running checkAuth')
   let res = await fetch(`auth/status`)
   res = await res.json()
   $('#main-preloader').remove()
   if (res.authorized) {
+    userData.username = res.username
+    $('#index-banner .badge span').text(userData.username)
+    $('#index-banner .badge').removeClass('hide')
+    $('#index-banner').addClass('logged-in')
     renderRepos()
   } else {
-    $('#errorMessage, #mainButton').removeClass('hide')
+    $('#index-banner .row').removeClass('hide')
+    $('#errorMessage').removeClass('hide')
     $('#mainButton').text('Authorize again through GitHub»')
   }
 }
 
+// Checks if client has a valid session.
 async function checkSession () {
   let res = await fetch(`auth/session`)
   res = await res.json()
   if (!res.active) {
-    $('#subTitle, #mainButton').removeClass('hide')
+    $('#index-banner .row, #subTitle').removeClass('hide')
     $('#main-preloader').remove()
   } else checkAuthorization()
 }

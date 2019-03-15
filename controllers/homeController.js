@@ -19,7 +19,7 @@ const homeController = {}
  */
 homeController.index = async (req, res) => {
   req.session.access_token = process.env.API_KEY // REMOVE FROM THIS FILE AT PRODUCTION!!!!!!!!!!!!!
-  res.sendFile(path.join(__dirname, '../public', 'app.html'))
+  res.sendFile(path.join(__dirname, '../views', 'index.html'))
 }
 
 // Exports.
