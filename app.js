@@ -17,7 +17,7 @@ const favicon = require('serve-favicon')
 
 const app = express()
 const http = require('http').Server(app)
-require('./lib/socket').listen((http))
+require('./lib/server/socket').listen((http))
 
 // Initiate & configure helmet
 // app.use(helmet())

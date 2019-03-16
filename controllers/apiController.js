@@ -7,8 +7,8 @@
 
 'use strict'
 
-const api = require('../lib/api')
-const io = require('../lib/socket')
+const api = require('../lib/server/api')
+const io = require('../lib/server/socket')
 const crypto = require('crypto')
 // Load .env-file to environment.
 require('dotenv').config()
@@ -48,6 +48,10 @@ apiController.indexPost = (req, res, next) => {
  * paths GET
  */
 apiController.paths = async (req, res, next) => {
+  res.set({
+    'Cache-Control': 'no-store',
+    'Vary': '*'
+  })
   if (req.query.wh) {
     if (req.query.action === 'create') {
       let result = await api.createWebHook(req.query.path, process.env.WH_SECRET, req.session.access_token)
@@ -60,10 +64,8 @@ apiController.paths = async (req, res, next) => {
       } else res.status(400).end()
     }
   } else {
-    console.log(req.query)
     let params = req.path
     if (Object.keys(req.query).length > 0) params += '?' + require('querystring').stringify(req.query)
-    console.log(params)
     let result = await api.fetchGithub(params, req.session.access_token)
     res.json(result)
   }

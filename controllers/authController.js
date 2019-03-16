@@ -7,10 +7,12 @@
 
 'use strict'
 
+const redirectURI = require('../lib/config').redirect_uri
+
 // Load .env-file to environment.
 require('dotenv').config()
 
-const api = require('../lib/api')
+const api = require('../lib/server/api')
 
 const oauth2 = require('simple-oauth2').create({
   client: {
@@ -26,7 +28,7 @@ const oauth2 = require('simple-oauth2').create({
 
 // Authorization uri definition
 const authorizationUri = oauth2.authorizationCode.authorizeURL({
-  redirect_uri: 'http://localhost:3000/auth/callback',
+  redirect_uri: redirectURI,
   scope: 'repo',
   state: '3(#0/!~'
 })
@@ -52,18 +54,14 @@ authController.callback = async (req, res, next) => {
 
   try {
     const result = await oauth2.authorizationCode.getToken(options)
-
-    console.log('The resulting token: ', result)
-
     const token = oauth2.accessToken.create(result)
 
     req.session.regenerate((err) => {
       req.session.access_token = token.token.access_token
-      res.redirect('/login')
+      res.redirect('/')
       if (err) next()
     })
   } catch (error) {
-    console.error('Access Token Error', error.message)
     next(error)
   }
 }
@@ -72,16 +70,19 @@ authController.callback = async (req, res, next) => {
  * /status GET
  */
 authController.status = async (req, res, next) => {
+  res.set({
+    'Cache-Control': 'no-store',
+    'Vary': '*'
+  })
   if (!req.session.access_token) {
     res.json({ authorized: false })
   } else {
     let response = await api.authorizeUser(process.env.CLIENT_ID, process.env.CLIENT_SECRET, req.session.access_token)
-    console.log(response.status)
     if (response.status === 200) {
       let body = await response.json()
       req.session.username = body.user.login
-      res.status(200).json({ authorized: true, username: req.session.username })
-    } else res.status(200).json({ authorized: false })
+      res.json({ authorized: true, username: req.session.username })
+    } else res.json({ authorized: false })
   }
 }
 
@@ -89,7 +90,10 @@ authController.status = async (req, res, next) => {
  * /session GET
  */
 authController.session = async (req, res, next) => {
-  console.log('SESSION CHECK: ' + req.session.access_token)
+  res.set({
+    'Cache-Control': 'no-store',
+    'Vary': '*'
+  })
   if (req.session.access_token) {
     res.json({ active: true })
   } else res.json({ active: false })
@@ -100,10 +104,8 @@ authController.session = async (req, res, next) => {
  */
 authController.logout = async (req, res, next) => {
   let status = await api.deleteToken(process.env.CLIENT_ID, process.env.CLIENT_SECRET, req.session.access_token)
-  console.log(status)
   if (status === 204) {
     req.session.destroy(err => {
-      console.log('DELETED TOKEN, DESTROYING SESSION!')
       res.redirect('/')
       if (err) next(err)
     })

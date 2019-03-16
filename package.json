@@ -7,8 +7,8 @@
     "start": "node ./app.js",
     "devstart": "nodemon --inspect ./app.js",
     "lint": "standard | snazzy",
-    "build": "webpack",
-    "watch": "webpack --watch"
+    "build": "webpack --mode=production",
+    "watch": "webpack --watch --mode=development"
   },
   "repository": {
     "type": "git",
