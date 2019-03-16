@@ -7,9 +7,9 @@
 
 'use strict'
 
+const createError = require('http-errors')
 const express = require('express')
 const helmet = require('helmet')
-// const hbs = require('express-hbs')
 const session = require('express-session')
 const path = require('path')
 const logger = require('morgan')
@@ -20,22 +20,16 @@ const http = require('http').Server(app)
 require('./lib/server/socket').listen((http))
 
 // Initiate & configure helmet
-// app.use(helmet())
-// app.use(helmet.contentSecurityPolicy({
-//   directives: {
-//     defaultSrc: ["'self'"],
-//     styleSrc: ["'self'", "'unsafe-inline'", 'stackpath.bootstrapcdn.com', 'cdnjs.cloudflare.com'],
-//     scriptSrc: ["'self'", "'unsafe-inline'", 'code.jquery.com', 'cdnjs.cloudflare.com', 'stackpath.bootstrapcdn.com', 'use.fontawesome.com']
-//   }
-// }))
-
-// view engine setup
-// app.engine('hbs', hbs.express4({
-//   defaultLayout: path.join(__dirname, 'views', 'layouts', 'default'),
-//   partialsDir: path.join(__dirname, 'views', 'partials')
-// }))
-// app.set('view engine', 'hbs')
-// app.set('views', path.join(__dirname, 'views'))
+app.use(helmet())
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    imgSrc: ["'self'", '*.githubusercontent.com'],
+    styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com', 'cdnjs.cloudflare.com'],
+    scriptSrc: ["'self'", "'unsafe-eval'", 'cdnjs.cloudflare.com'],
+    fontSrc: ["'self'", 'fonts.gstatic.com']
+  }
+}))
 
 // additional middleware
 app.use(logger('dev'))
@@ -51,37 +45,38 @@ const sessionOptions = {
   resave: false, // Resave even if a request is not changing the session.
   saveUninitialized: false, // Don't save a created but not modified session.
   cookie: {
-    // secure: true in production (won't work on localhost without https) !!!!!!!!!!!
     maxAge: 1000 * 60 * 60 * 24, // 1 day
     sameSite: 'lax' // allowed when following a regular link from an external website, blocking it in CSRF-prone request methods (POST)
   }
 }
+
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sessionOptions.cookie.secure = true // serve secure cookies
+}
+
 app.use(session(sessionOptions))
-
-// middleware to be executed before the routes
-// app.use(async (req, res, next) => {
-//   // flash messages - survives only a round trip
-//   res.locals.flash = req.session.flash
-//   delete req.session.flash
-
-//   next()
-// })
 
 // routes
 app.use('/', require('./routes/homeRouter'))
 app.use('/api', require('./routes/apiRouter'))
 app.use('/auth', require('./routes/authRouter'))
+app.use('*', (req, res, next) => next(createError(404)))
 
-// catch 404
-app.use((req, res, next) => {
-  res.status(404)
-  res.sendFile(path.join(__dirname, 'public', '404.html'))
-})
-
-// error handler
+// Error handler.
 app.use((err, req, res, next) => {
-  res.status(err.status || 500)
-  res.status(500).sendFile(path.join(__dirname, 'public', '500.html'))
+  // 404 Not Found.
+  if (err.statusCode === 404) {
+    return res.status(404).sendFile(path.join(__dirname, 'views', '404.html'))
+  }
+
+  // 500 Internal Server Error (in production, all other errors send this response).
+  if (req.app.get('env') !== 'development') {
+    return res.status(500).sendFile(path.join(__dirname, 'views', '500.html'))
+  }
+
+  // Development only!
+  res.status(err.status || 500).send(err.message)
 })
 
 http.listen(3000, () => console.log('Server running at http://localhost:3000/'))

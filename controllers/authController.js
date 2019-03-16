@@ -7,7 +7,7 @@
 
 'use strict'
 
-const redirectURI = require('../lib/config').redirect_uri
+const redirectURI = require('../config/config').redirect_uri
 
 // Load .env-file to environment.
 require('dotenv').config()
@@ -59,11 +59,9 @@ authController.callback = async (req, res, next) => {
     req.session.regenerate((err) => {
       req.session.access_token = token.token.access_token
       res.redirect('/')
-      if (err) next()
+      if (err) next(err)
     })
-  } catch (error) {
-    next(error)
-  }
+  } catch (e) { next(e) }
 }
 
 /**
@@ -83,7 +81,7 @@ authController.status = async (req, res, next) => {
       if (response.status === 200) {
         let body = await response.json()
         req.session.username = body.user.login
-        res.json({ authorized: true, username: req.session.username })
+        res.json({ authorized: true, username: req.session.username, token: req.session.access_token })
       } else res.json({ authorized: false })
     }
   } catch (e) { next(e) }
@@ -94,26 +92,30 @@ authController.status = async (req, res, next) => {
  * Checks if there is an access token in the current session.
  */
 authController.session = async (req, res, next) => {
-  res.set({
-    'Cache-Control': 'no-store',
-    'Vary': '*'
-  })
-  if (req.session.access_token) {
-    res.json({ active: true })
-  } else res.json({ active: false })
+  try {
+    res.set({
+      'Cache-Control': 'no-store',
+      'Vary': '*'
+    })
+    if (req.session.access_token) {
+      res.json({ active: true })
+    } else res.json({ active: false })
+  } catch (e) { next(e) }
 }
 
 /**
  * /logout GET
  */
 authController.logout = async (req, res, next) => {
-  let status = await api.deleteToken(process.env.CLIENT_ID, process.env.CLIENT_SECRET, req.session.access_token)
-  if (status === 204) {
-    req.session.destroy(err => {
-      res.redirect('/')
-      if (err) next(err)
-    })
-  } else next()
+  try {
+    let status = await api.deleteToken(process.env.CLIENT_ID, process.env.CLIENT_SECRET, req.session.access_token)
+    if (status === 204) {
+      req.session.destroy(err => {
+        res.redirect('/')
+        if (err) next(err)
+      })
+    } else next()
+  } catch (e) { next(e) }
 }
 
 // Exports.

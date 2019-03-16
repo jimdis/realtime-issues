@@ -15,7 +15,7 @@ const homeController = {}
  * index GET
  */
 homeController.index = async (req, res) => {
-  res.sendFile(path.join(__dirname, '../views', 'index.html'))
+  res.sendFile(path.join(__dirname, '..', 'views', 'index.html'))
 }
 
 // Exports.
