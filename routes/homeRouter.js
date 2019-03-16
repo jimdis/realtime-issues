@@ -15,5 +15,8 @@ const controller = require('../controllers/homeController')
 // GET /
 router.get('/', controller.index)
 
+// GET /login
+router.get('/login', controller.login)
+
 // Exports.
 module.exports = router

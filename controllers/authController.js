@@ -37,7 +37,6 @@ const authController = {}
  * index GET
  */
 authController.index = (req, res, next) => {
-  console.log(authorizationUri)
   res.redirect(authorizationUri)
 }
 
@@ -58,12 +57,14 @@ authController.callback = async (req, res, next) => {
 
     const token = oauth2.accessToken.create(result)
 
-    req.session.access_token = token.token.access_token
-    // return res.status(200).json(token)
-    res.redirect('/')
+    req.session.regenerate((err) => {
+      req.session.access_token = token.token.access_token
+      res.redirect('/login')
+      if (err) next()
+    })
   } catch (error) {
     console.error('Access Token Error', error.message)
-    return res.status(500).json('Authentication failed')
+    next(error)
   }
 }
 
@@ -79,8 +80,8 @@ authController.status = async (req, res, next) => {
     if (response.status === 200) {
       let body = await response.json()
       req.session.username = body.user.login
-      res.json({ authorized: true, username: req.session.username })
-    } else res.json({ authorized: false })
+      res.status(200).json({ authorized: true, username: req.session.username })
+    } else res.status(200).json({ authorized: false })
   }
 }
 
@@ -88,6 +89,7 @@ authController.status = async (req, res, next) => {
  * /session GET
  */
 authController.session = async (req, res, next) => {
+  console.log('SESSION CHECK: ' + req.session.access_token)
   if (req.session.access_token) {
     res.json({ active: true })
   } else res.json({ active: false })
@@ -100,9 +102,12 @@ authController.logout = async (req, res, next) => {
   let status = await api.deleteToken(process.env.CLIENT_ID, process.env.CLIENT_SECRET, req.session.access_token)
   console.log(status)
   if (status === 204) {
-    req.session.destroy(err => { if (err) res.json({ error_session: err }) })
-    res.redirect('/')
-  } else res.json({ error_status: status })
+    req.session.destroy(err => {
+      console.log('DELETED TOKEN, DESTROYING SESSION!')
+      res.redirect('/')
+      if (err) next(err)
+    })
+  } else next()
 }
 
 // Exports.

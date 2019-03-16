@@ -82,8 +82,7 @@ app.use((req, res, next) => {
 // error handler
 app.use((err, req, res, next) => {
   res.status(err.status || 500)
-  let message = err.message || 'Internal Server Error'
-  res.send(message)
+  res.status(500).sendFile(path.join(__dirname, 'public', '500.html'))
 })
 
 http.listen(3000, () => console.log('Server running at http://localhost:3000/'))
