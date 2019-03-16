@@ -14,6 +14,7 @@ require('dotenv').config()
 
 const api = require('../lib/server/api')
 
+// Set up oauth2.
 const oauth2 = require('simple-oauth2').create({
   client: {
     id: process.env.CLIENT_ID,
@@ -51,7 +52,6 @@ authController.callback = async (req, res, next) => {
   const options = {
     code
   }
-
   try {
     const result = await oauth2.authorizationCode.getToken(options)
     const token = oauth2.accessToken.create(result)
@@ -68,26 +68,30 @@ authController.callback = async (req, res, next) => {
 
 /**
  * /status GET
+ * Checks if client has a valid access token.
  */
 authController.status = async (req, res, next) => {
-  res.set({
-    'Cache-Control': 'no-store',
-    'Vary': '*'
-  })
-  if (!req.session.access_token) {
-    res.json({ authorized: false })
-  } else {
-    let response = await api.authorizeUser(process.env.CLIENT_ID, process.env.CLIENT_SECRET, req.session.access_token)
-    if (response.status === 200) {
-      let body = await response.json()
-      req.session.username = body.user.login
-      res.json({ authorized: true, username: req.session.username })
-    } else res.json({ authorized: false })
-  }
+  try {
+    res.set({
+      'Cache-Control': 'no-store',
+      'Vary': '*'
+    })
+    if (!req.session.access_token) {
+      res.json({ authorized: false })
+    } else {
+      let response = await api.authorizeUser(process.env.CLIENT_ID, process.env.CLIENT_SECRET, req.session.access_token)
+      if (response.status === 200) {
+        let body = await response.json()
+        req.session.username = body.user.login
+        res.json({ authorized: true, username: req.session.username })
+      } else res.json({ authorized: false })
+    }
+  } catch (e) { next(e) }
 }
 
 /**
  * /session GET
+ * Checks if there is an access token in the current session.
  */
 authController.session = async (req, res, next) => {
   res.set({

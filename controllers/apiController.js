@@ -46,12 +46,14 @@ apiController.indexPost = (req, res, next) => {
 
 /**
  * paths GET
+ * Controls what the server API should do depending on path & query
  */
 apiController.paths = async (req, res, next) => {
   res.set({
     'Cache-Control': 'no-store',
     'Vary': '*'
   })
+  // Query for webhooks.
   if (req.query.wh) {
     if (req.query.action === 'create') {
       let result = await api.createWebHook(req.query.path, process.env.WH_SECRET, req.session.access_token)

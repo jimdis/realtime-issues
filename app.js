@@ -71,7 +71,6 @@ app.use(session(sessionOptions))
 app.use('/', require('./routes/homeRouter'))
 app.use('/api', require('./routes/apiRouter'))
 app.use('/auth', require('./routes/authRouter'))
-app.use('/push', require('./routes/pushRouter'))
 
 // catch 404
 app.use((req, res, next) => {
