@@ -23,7 +23,7 @@ require('./lib/server/socketio')(http)
 app.use(helmet())
 app.use(helmet.contentSecurityPolicy({
   directives: {
-    defaultSrc: ["'self'"],
+    defaultSrc: ["'self'", 'ws://localhost:3000', 'ws://cscloud417.lnu.se'],
     imgSrc: ["'self'", '*.githubusercontent.com'],
     styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com', 'cdnjs.cloudflare.com'],
     scriptSrc: ["'self'", "'unsafe-eval'", 'cdnjs.cloudflare.com'],
