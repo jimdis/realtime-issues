@@ -17,27 +17,7 @@ const favicon = require('serve-favicon')
 
 const app = express()
 const http = require('http').Server(app)
-require('./lib/server/socket').listen((http))
-// const io = require('socket.io')(http)
-
-// io.use((socket, next) => {
-//   let username = socket.handshake.query.username
-//   let token = socket.handshake.query.token
-
-//   if (token === 'abcd') {
-//     return next()
-//   }
-//   return next(new Error('authentication error'))
-// })
-// io.on('connection', (socket) => {
-//   console.log('id: ' + socket.id)
-//   let username = socket.handshake.query.username
-//   let token = socket.handshake.query.token
-//   // socket.id = username
-//   console.log(username + 'connected with' + token)
-//   console.log('new id: ' + socket.id)
-//   io.to(`${socket.id}`).emit('testing', 'Testing 123')
-// })
+require('./lib/server/socketio')(http)
 
 // Initiate & configure helmet
 app.use(helmet())

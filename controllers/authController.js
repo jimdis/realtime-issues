@@ -12,7 +12,7 @@ const redirectURI = require('../config/config').redirect_uri
 // Load .env-file to environment.
 require('dotenv').config()
 
-const api = require('../lib/server/api')
+const api = require('../lib/server/api-server')
 
 // Set up oauth2.
 const oauth2 = require('simple-oauth2').create({

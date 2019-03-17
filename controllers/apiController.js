@@ -7,8 +7,8 @@
 
 'use strict'
 
-const api = require('../lib/server/api')
-const io = require('../lib/server/socket')
+const api = require('../lib/server/api-server')
+
 const crypto = require('crypto')
 // Load .env-file to environment.
 require('dotenv').config()
@@ -25,10 +25,8 @@ apiController.verifySignature = (req, res, next) => {
     let compSign = Buffer.from('sha1=' + crypto.createHmac('sha1', secret)
       .update(JSON.stringify(req.body)).digest('hex'))
 
-    if (crypto.timingSafeEqual(ghSign, compSign)) {
-      next()
-    } else res.status(401).send('Signature does not match')
-  } catch (e) { next(e) }
+    if (crypto.timingSafeEqual(ghSign, compSign)) next()
+  } catch (e) { res.status(401).send('Signature does not match') }
 }
 
 /**
@@ -40,16 +38,15 @@ apiController.index = (req, res, next) => {
 
 /**
  * index POST
+ * Handles payloads from GitHub Webhooks
  */
 apiController.indexPost = (req, res, next) => {
-  console.log('ID FROM GH!' + req.params.id)
-  console.log(io)
-  io.to(io.sockets[Object.keys(io.sockets)[0]]).emit('testing', req.body)
-  // try {
-  //   io.sockets.emit('issue', req.body)
-  //   res.json(req.body)
-  // } catch (e) { next(e) }
-  res.status(200).send('ok')
+  const io = require('../lib/server/socketio').getIO()
+  try {
+    // Emit only to room with same name as user for which webhook is installed
+    io.in(req.params.id).emit('issue', req.body)
+    res.status(204).end()
+  } catch (e) { next(e) }
 }
 
 /**
