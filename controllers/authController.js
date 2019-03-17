@@ -55,9 +55,11 @@ authController.callback = async (req, res, next) => {
   try {
     const result = await oauth2.authorizationCode.getToken(options)
     const token = oauth2.accessToken.create(result)
+    console.log('TOKEN RECEIVED: ' + token.token.access_token)
 
     req.session.regenerate((err) => {
       req.session.access_token = token.token.access_token
+      console.log('TOKEN WRITTEN TO SESSION: ' + req.session.access_token)
       res.redirect('/')
       if (err) next(err)
     })

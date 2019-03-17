@@ -15,6 +15,8 @@ const homeController = {}
  * index GET
  */
 homeController.index = async (req, res) => {
+  console.log('SESSION AT HOME: ' + req.session)
+  console.log('SESSION TOKEN at HOME: ' + req.session.access_token)
   res.sendFile(path.join(__dirname, '..', 'views', 'index.html'))
 }
 
