@@ -44,7 +44,6 @@ const sessionOptions = {
   secret: 'sC#TvqLFMYG27CLr4A%@UTkqM&M9iwa', // Change it!!! The secret is used to hash the session with HMAC.
   resave: false, // Resave even if a request is not changing the session.
   saveUninitialized: false, // Don't save a created but not modified session.
-  proxy: true,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24, // 1 day
     sameSite: 'lax' // allowed when following a regular link from an external website, blocking it in CSRF-prone request methods (POST)
@@ -52,6 +51,7 @@ const sessionOptions = {
 }
 
 if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
   sessionOptions.cookie.secure = true // serve secure cookies
 }
 
