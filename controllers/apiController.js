@@ -42,11 +42,14 @@ apiController.index = (req, res, next) => {
  * index POST
  */
 apiController.indexPost = (req, res, next) => {
-  console.log(req.body)
-  try {
-    io.sockets.emit('issue', req.body)
-    res.json(req.body)
-  } catch (e) { next(e) }
+  console.log('ID FROM GH!' + req.params.id)
+  console.log(io)
+  io.to(io.sockets[Object.keys(io.sockets)[0]]).emit('testing', req.body)
+  // try {
+  //   io.sockets.emit('issue', req.body)
+  //   res.json(req.body)
+  // } catch (e) { next(e) }
+  res.status(200).send('ok')
 }
 
 /**
@@ -62,7 +65,7 @@ apiController.paths = async (req, res, next) => {
     // Query for webhooks.
     if (req.query.wh) {
       if (req.query.action === 'create') {
-        let result = await api.createWebHook(req.query.path, process.env.WH_SECRET, req.session.access_token)
+        let result = await api.createWebHook(req.query.path, process.env.WH_SECRET, req.session.access_token, req.session.username)
         res.json(result)
       }
       if (req.query.action === 'delete') {

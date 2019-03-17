@@ -1,4 +1,4 @@
-const WH_URL_DEV = 'https://caa8f02a.ngrok.io/api'
+const WH_URL_DEV = 'https://3b0a0879.ngrok.io/api'
 const WH_URL_PROD = 'https://cscloud417.lnu.se/api'
 
 const OAUTH_URL_DEV = 'http://localhost:3000/auth/callback'

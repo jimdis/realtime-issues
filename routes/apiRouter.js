@@ -16,10 +16,13 @@ const controller = require('../controllers/apiController')
 router.get('/', controller.index)
 
 // POST /
-router.post('/', controller.verifySignature, controller.indexPost)
+router.post('/:id', controller.verifySignature, controller.indexPost)
 
 // GET /paths
 router.get('/*', controller.paths)
+
+// // POST /:id
+// router.post('/:id', controller.verifySignature, controller.idPost)
 
 // Exports.
 module.exports = router
